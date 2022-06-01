@@ -1,0 +1,10 @@
+{
+    "server": {"servers": "localhost" },
+    "db": {
+        "uri": "mongodb://localhost:27017",
+        "db": "recipe_dispatcher"
+    },
+    "http": {
+        "port": 5000
+    }
+}
