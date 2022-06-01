@@ -1,0 +1,10 @@
+{
+    "server": {"servers": "localhost" },
+    "db": {
+        "uri": "mongodb://localhost:27017",
+        "db": "node"
+    },
+    "node": {
+        "id": 1
+    }
+}
