@@ -30,22 +30,22 @@ spec:
               value: /var/lib/grafana
             - name: INFLUX_TOKEN
               value: _ouSHzto7lXILtP7bE_N9reJfV9FuxONJWgex3pN6TOf3S2sGI2tqRvLqfQkJ3EmBNCRvlEZJj0PQH3DPgBXwA==
-          image: grafana/grafana-oss
+          image: howhow8765/cnfpb-grafana
           name: grafana
           ports:
             - containerPort: 3000
           resources: {}
-          volumeMounts:
-            - mountPath: /var/lib/grafana
-              name: grafana-claim0
-            - mountPath: /etc/grafana/provisioning
-              name: grafana-claim1
+          # volumeMounts:
+          #   - mountPath: /var/lib/grafana
+          #     name: grafana-claim0
+          #   - mountPath: /etc/grafana/provisioning
+          #     name: grafana-claim1
       restartPolicy: Always
-      volumes:
-        - name: grafana-claim0
-          persistentVolumeClaim:
-            claimName: grafana-claim0
-        - name: grafana-claim1
-          persistentVolumeClaim:
-            claimName: grafana-claim1
+      # volumes:
+      #   - name: grafana-claim0
+      #     persistentVolumeClaim:
+      #       claimName: grafana-claim0
+      #   - name: grafana-claim1
+      #     persistentVolumeClaim:
+      #       claimName: grafana-claim1
 status: {}

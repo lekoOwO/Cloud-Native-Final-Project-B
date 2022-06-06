@@ -4,7 +4,7 @@ datasources:
   type: 'influxdb'
   access: 'proxy'
   org_id: 1
-  url: 'http://influxdb:8086/'
+  url: 'http://cnfpb-influx:8086/'
   is_default: true
   version: 1
   editable: true

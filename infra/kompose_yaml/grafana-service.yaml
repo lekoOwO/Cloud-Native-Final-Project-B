@@ -15,5 +15,7 @@ spec:
       targetPort: 3000
   selector:
     io.kompose.service: grafana
-status:
-  loadBalancer: {}
+  sessionAffinity: None
+  type: LoadBalancer
+#status:
+#  loadBalancer: {}

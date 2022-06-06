@@ -8,5 +8,37 @@ spec:
   containers:
     - name: influx
       image: influxdb:2.0
+      env:
+        - name: DOCKER_INFLUXDB_INIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: influx-secret
+              key: DOCKER_INFLUXDB_INIT_USERNAME
+        - name: DOCKER_INFLUXDB_INIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: influx-secret
+              key: DOCKER_INFLUXDB_INIT_PASSWORD
+        - name: DOCKER_INFLUXDB_INIT_ORG
+          valueFrom:
+            secretKeyRef:
+              name: influx-secret
+              key: DOCKER_INFLUXDB_INIT_ORG
+        - name: DOCKER_INFLUXDB_INIT_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: influx-secret
+              key: DOCKER_INFLUXDB_INIT_BUCKET
+        - name: DOCKER_INFLUXDB_INIT_MODE
+          valueFrom:
+            secretKeyRef:
+              name: influx-secret
+              key: DOCKER_INFLUXDB_INIT_MODE
+        - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: influx-secret
+              key: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+
       ports:
       - containerPort: 27017
