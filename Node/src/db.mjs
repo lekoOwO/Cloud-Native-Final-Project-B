@@ -22,7 +22,7 @@ async function add(type, data){
         throw new Error(`unknown collection: ${type}`);
     }
 
-    const result = await collections[type].insertOne(data);
+    const result = await collections[type].insertOne({...data, removed: false});
     return result.insertedId;
 }
 
@@ -34,8 +34,17 @@ async function loadOne(type, match, option){
     return await collections[type].findOne(match, option);
 }
 
+async function remove(type, match){
+    if (!collections.hasOwnProperty(type)) {
+        throw new Error(`unknown collection: ${type}`);
+    }
+
+    return await collections[type].update(match, {$set: {removed: true}});
+}
+
 export {
     client, db,
     add,
-    loadOne
+    loadOne,
+    remove
 }

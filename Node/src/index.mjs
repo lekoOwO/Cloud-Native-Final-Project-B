@@ -1,10 +1,19 @@
 import express from 'express';
 import {sleep, randomItem, config} from "./utils.mjs"
-import {log, error} from "./log.mjs"
+import {log, error, writeApi} from "./log.mjs"
 import {oven} from "./Factory/index.mjs"
 import {generateMaterialPatch} from "./PreLayer/index.mjs"
-import {calcS1Temp, calcS2Time, reloadConst} from "./Adjuster/index.mjs"
+import {calcS1Temp, calcS2Time, reloadConst, removeAllData} from "./Adjuster/index.mjs"
 import {report} from "./Reporter/index.mjs"
+import {subscribe} from "./nats.mjs"
+import {Point} from '@influxdata/influxdb-client'
+
+subscribe("recipe.new", async (recipe) => {
+    log(`[subscribe.recipe.new] Receive new recipe from dispatcher.`, recipe);
+    oven.setRecipe(recipe);
+    await removeAllData();
+    await reloadConst();
+});
 
 const router = express.Router();
 const app = express();
@@ -15,6 +24,17 @@ let perform = false;
 
 (async() => {
     await oven.init();
+    (async() => {
+        while (true) {
+            const point = new Point(`oven`)
+                .tag('nodeId', config.node.id)
+                .tag("id", oven.id)
+                .floatField('temperature', oven.temp)
+            writeApi.writePoint(point);
+
+            await sleep(3000);
+        }
+    })();
     while (true) {
         if (!perform) {
             await sleep(1000);
@@ -26,10 +46,27 @@ let perform = false;
 
             const patch = await generateMaterialPatch();
 
+            const point = new Point(`patch`)
+                .tag('node', config.node.id)
+                .tag("ovenId", oven.id)
+                .stringField("id", patch.id)
+                .floatField('thickness', patch.thickness)
+                .floatField('moisture', patch.moisture)
+                .floatField('recipe', oven.c1)
+            writeApi.writePoint(point);
+
             log("[Main]", "Stage 1: Generate material patch.", patch);
 
-            for(const steakId of patch.materials){
-                const strategyIndex = randomItem([1,1,1,1,1,1,1,2,2,2]);
+            for(let c = 0; c < patch.materials.length; c++){
+                const steak = patch.materials[c];
+                if (c < patch.materials.length * 0.3){ // Strategy 2 30%
+                    steak.strategy = 2;
+                } else {
+                    steak.strategy = 1;
+                }
+            }
+
+            for(const {id: steakId, strategy: strategyIndex} of patch.materials){
                 let strategy = {time: null, temp: null};
                 let c = null;
 
@@ -52,16 +89,18 @@ let perform = false;
                 log("[Main]", "Stage 2: Calculate strategy.", {steakId, strategyIndex, ...strategy, c});
                 
                 const rawSteak = {steakId, thickness: patch.thickness, moisture: patch.moisture};
-                const steak = await oven.perform(rawSteak, strategy);
+                let steak = {...rawSteak}
+                steak.done = await oven.perform(rawSteak, strategy);
 
                 log("[Main]", "Stage 3: Perform.", steak);
 
-                await report({type: strategyIndex.toString(), s: c, completeness: steak.done});
+                steak = {type: strategyIndex.toString(), s: c, steak, patchId: patch.id, recipe: oven.c1};
+                await report(steak);
 
                 log("[Main]", "Stage 4: Report.", steak);
 
                 if (Math.abs(steak.done - 100) < 0.1) {
-                    await reloadConst();
+                    await reloadConst(strategyIndex);
                 }
             }
         } catch (e) {
@@ -79,4 +118,8 @@ app.use("/api/v1", router);
 
 app.listen(config.http.port, () => {
     console.log(`listening on port ${config.http.port}`);
+});
+
+process.on('exit', async function() {
+    await writeApi.flush();
 });

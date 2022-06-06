@@ -5,35 +5,56 @@ import {loadOne, add} from "../db.mjs"
 
 class Oven {
     constructor(id, c1){
-        this.#id = id;
-        this.#c1 = c1 ?? 10.5708245;
+        this.id = id;
+        this.c1 = c1 ?? 0.02234846622;
 
         this.init()
     };
 
-    #id;
+    id;
     #isInited = false;
     #envMoistureOffset;
-    #envTempOffset;
-    #c1;
+    c1;
+    temp = 30;
 
     async init(){
         if (this.#isInited) return;
-        const id = this.#id;
+        const id = this.id;
 
         const oven = await loadOne("oven", {id});
         if (oven) {
             this.#envMoistureOffset = oven.envMoistureOffset;
-            this.#envTempOffset = oven.envTempOffset;
         } else {
             this.#envMoistureOffset = randomIntFromInterval(10, 100) / 100;
-            this.#envTempOffset = randomIntFromInterval(10, 100) / 100;
-            await add("oven", {id, envMoistureOffset: this.#envMoistureOffset, envTempOffset: this.#envTempOffset});
+            await add("oven", {id, envMoistureOffset: this.#envMoistureOffset});
         }
     }
 
     setRecipe(recipe){
-        this.#c1 = recipe.c1 ?? this.#c1;
+        this.c1 = recipe.c1 ?? this.c1;
+    }
+
+    async setTemp(targetTemp){
+        let c = 0;
+        while(this.temp != targetTemp){
+            if (Math.abs(this.temp - targetTemp) < 1){
+                this.temp = targetTemp;
+                break;
+            }
+
+            if (c % 100 === 0) {
+                log("[Oven.setTemp]", `(${this.temp} / ${targetTemp})`);
+            }
+
+            if (this.temp > targetTemp){
+                this.temp -= 1;
+            } else {
+                this.temp += 1;
+            }
+
+            await sleep(2);
+            c++;
+        }
     }
     
     async perform(steak, strategy){
@@ -44,14 +65,16 @@ class Oven {
         const mc = (1/moisture) * this.#envMoistureOffset;
         const tc = (1/thickness);
         const tmc = time;
-        const tpc = (temp + 273) * this.#envTempOffset;
+        const tpc = ((temp + 273) ** 2);
 
-        const done = mc * tc * tmc * tpc * this.#c1;
+        const done = mc * tc * tmc * tpc * this.c1;
 
+        log("[Oven.perform]", `Adjusting Oven Temperature...`);
+        await this.setTemp(temp);
         log("[Oven.perform]", `Performing...`);
-        await sleep(3000); // Skip Waiting
+        await sleep(time * 10);
 
-        return {done};
+        return done;
     }
 };
 

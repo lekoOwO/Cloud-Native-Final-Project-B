@@ -1,4 +1,4 @@
-import { config } from "../utils.mjs"
+import { config } from "./utils.mjs"
 import { connect, StringCodec } from "nats";
 
 const nc = await connect(config.server);

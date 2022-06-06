@@ -4,13 +4,13 @@ import {randomIntFromInterval, config} from "../utils.mjs";
 
 async function generateMaterialPatch(){
     // Generate thickness and moisture randomly
-    const thickness = randomIntFromInterval(18, 25); // mm
-    const moisture = randomIntFromInterval(50, 80); // %
+    const thickness = randomIntFromInterval(18, 23); // mm
+    const moisture = randomIntFromInterval(70, 80); // %
     const amount = randomIntFromInterval(1, 100); // pcs
 
     const materials = [];
     for(let i = 0; i < amount; i++) {
-        materials.push(uuidv4());
+        materials.push({id: uuidv4()});
     }
 
     const patch =  {
@@ -22,7 +22,7 @@ async function generateMaterialPatch(){
 
     const patchId = await dbAdd("material", {...patch, node: config.node.id});
 
-    return {patchId, ...patch};
+    return {id: patchId, ...patch};
 }
 
 export {generateMaterialPatch}

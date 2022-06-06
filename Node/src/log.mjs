@@ -24,14 +24,31 @@ function splitTagAndData(x){
     return {tags, datas}
 }
 
+function tagAndDataToPoint({tags, datas}){
+    const point = new Point(`log`)
+        .timestamp(Date.now())
+        .tag('node', config.node.id);
+
+    for(const tag of tags) point.tag(tag, "1");
+    for(let i = 1; i <= datas.length; i++) {
+        point.stringField(i.toString(), JSON.stringify(datas[i-1], null, 2));
+    }
+
+    return point;
+}
+
 function log(...x){
     console.log(`[Node ${config.node.id}]`, ...x);
     const {tags, datas} = splitTagAndData(x);
+    const point = tagAndDataToPoint({tags, datas});
+    writeApi.writePoint(point);
 }
 
 function error(...x){
     console.error(`[Node ${config.node.id}]`, ...x);
     const {tags, datas} = splitTagAndData(x);
+    const point = tagAndDataToPoint({tags, datas});
+    writeApi.writePoint(point);
 }
 
-export {log, error};
+export {log, error, writeApi};
