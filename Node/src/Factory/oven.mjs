@@ -52,7 +52,7 @@ class Oven {
                 this.temp += 1;
             }
 
-            await sleep(2);
+            await sleep(20);
             c++;
         }
     }
@@ -72,7 +72,7 @@ class Oven {
         log("[Oven.perform]", `Adjusting Oven Temperature...`);
         await this.setTemp(temp);
         log("[Oven.perform]", `Performing...`);
-        await sleep(time * 10);
+        await sleep(time * 30);
 
         return done;
     }

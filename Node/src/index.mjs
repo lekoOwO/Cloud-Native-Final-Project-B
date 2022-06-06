@@ -8,11 +8,13 @@ import {report} from "./Reporter/index.mjs"
 import {subscribe} from "./nats.mjs"
 import {Point} from '@influxdata/influxdb-client'
 
-subscribe("recipe.new", async (recipe) => {
-    log(`[subscribe.recipe.new] Receive new recipe from dispatcher.`, recipe);
-    oven.setRecipe(recipe);
+subscribe("recipe.new", async (data) => {
+    data = JSON.parse(data);
+    log(`[subscribe.recipe.new] Receive new recipe from dispatcher.`, data);
+    oven.setRecipe(data);
     await removeAllData();
-    await reloadConst();
+    await reloadConst(1);
+    await reloadConst(2);
 });
 
 const router = express.Router();
@@ -30,9 +32,10 @@ let perform = false;
                 .tag('nodeId', config.node.id)
                 .tag("id", oven.id)
                 .floatField('temperature', oven.temp)
+                .timestamp(new Date())
             writeApi.writePoint(point);
 
-            await sleep(3000);
+            await sleep(1000);
         }
     })();
     while (true) {

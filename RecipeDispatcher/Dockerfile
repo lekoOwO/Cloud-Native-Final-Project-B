@@ -11,6 +11,7 @@ COPY package.json ./
 
 RUN pnpm install --production --quiet
 
-COPY ./src ./
+COPY src src
+COPY config config
 
 CMD [ "node", "src/index.mjs" ]

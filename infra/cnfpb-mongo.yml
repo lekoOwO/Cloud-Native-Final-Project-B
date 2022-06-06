@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cnfpb-mongo-pod
+  labels:
+    app: cnfpb-mongo
+spec:
+  containers:
+    - name: mongo
+      image: mongo:latest
+      ports:
+      - containerPort: 27017

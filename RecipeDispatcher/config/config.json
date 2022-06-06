@@ -1,7 +1,7 @@
 {
-    "server": {"servers": "localhost" },
+    "server": {"servers": "cnfpb-nats" },
     "db": {
-        "uri": "mongodb://localhost:27017",
+        "uri": "mongodb://cnfpb-mongo:27017",
         "db": "recipe_dispatcher"
     },
     "http": {

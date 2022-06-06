@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ./kompose convert -f docker-compose.yml --out kompose_yaml/
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: influxdb
+  name: influxdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: influxdb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: ./kompose convert -f docker-compose.yml --out kompose_yaml/
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: influxdb
+    spec:
+      containers:
+        - env:
+            - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+              value: _ouSHzto7lXILtP7bE_N9reJfV9FuxONJWgex3pN6TOf3S2sGI2tqRvLqfQkJ3EmBNCRvlEZJj0PQH3DPgBXwA==
+            - name: DOCKER_INFLUXDB_INIT_BUCKET
+              value: steak
+            - name: DOCKER_INFLUXDB_INIT_MODE
+              value: setup
+            - name: DOCKER_INFLUXDB_INIT_ORG
+              value: cloud17
+            - name: DOCKER_INFLUXDB_INIT_PASSWORD
+              value: cloudnative_influx
+            - name: DOCKER_INFLUXDB_INIT_USERNAME
+              value: cloudnative
+          image: influxdb:2.0
+          name: influxdb
+          ports:
+            - containerPort: 8086
+          resources: {}
+          volumeMounts:
+            - mountPath: /etc/influxdb2/config.yml
+              name: influxdb-claim0
+      restartPolicy: Always
+      volumes:
+        - name: influxdb-claim0
+          persistentVolumeClaim:
+            claimName: influxdb-claim0
+status: {}

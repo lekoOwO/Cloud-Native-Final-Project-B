@@ -39,7 +39,7 @@ async function remove(type, match){
         throw new Error(`unknown collection: ${type}`);
     }
 
-    return await collections[type].update(match, {$set: {removed: true}});
+    return await collections[type].updateMany(match, {$set: {removed: true}});
 }
 
 export {

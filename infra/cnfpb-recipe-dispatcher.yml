@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cnfpb-recipe-dispatcher-pod
+  labels:
+    app: cnfpb-recipe-dispatcher
+spec:
+  containers:
+    - name: cnfpb-recipe-dispatcher
+      image: howhow8765/cnfpb-recipe-dispatcher:latest
+      ports:
+      - containerPort: 5000

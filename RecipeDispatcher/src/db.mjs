@@ -1,5 +1,5 @@
 import {config} from "./utils.mjs"
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 const client = new MongoClient(config.db.uri, { useNewUrlParser: true });
 
@@ -12,23 +12,19 @@ try {
 const db = client.db(config.db.db);
 const recipe = db.collection("recipe");
 
-async function addRecipe({type, recipe}){
-    const result = await recipe.insertOne({
-        type, recipe
-    });
+async function addRecipe(data){
+    const result = await recipe.insertOne(data);
     return result.insertedId;
 }
 
-async function loadRecipe(type){
-    const result = await recipe.findOne({
-        type
-    }, {sort:{$natural:-1}}); // latest recipe
+async function loadRecipe(){
+    const result = await recipe.findOne({}, {sort:{$natural:-1}}); // latest recipe
     return result;
 }
 
 async function getRecipeById(id){
     const result = await recipe.findOne({
-        _id: id
+        _id: new ObjectId(id)
     });
     return result;
 }

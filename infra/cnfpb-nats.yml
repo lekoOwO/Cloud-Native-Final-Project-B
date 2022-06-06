@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cnfpb-nats-pod
+  labels:
+    app: cnfpb-nats
+spec:
+  containers:
+    - name: nats
+      image: nats:latest
+      ports:
+      - containerPort: 4222

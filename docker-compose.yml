@@ -4,7 +4,7 @@ services:
   influxdb:
     image: "influxdb:2.0"
     volumes:
-      - ../influxdb2:/var/lib/influxdb2
+#      - ../influxdb2:/var/lib/influxdb2
       - ./influx-config.yml:/etc/influxdb2/config.yml
     environment:
       - DOCKER_INFLUXDB_INIT_USERNAME=cloudnative
@@ -12,15 +12,18 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=cloud17
       - DOCKER_INFLUXDB_INIT_BUCKET=steak
       - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=_ouSHzto7lXILtP7bE_N9reJfV9FuxONJWgex3pN6TOf3S2sGI2tqRvLqfQkJ3EmBNCRvlEZJj0PQH3DPgBXwA==
     ports:
       - 8086:8086
   grafana:
-    image: "grafana/grafana-oss"
-    volumes:
-      - ../grafana/data:/var/lib/grafana
-      - ../grafana/provisioning:/etc/grafana/provisioning
+#    image: "grafana/grafana-oss"
+    build: grafana/
+#    volumes:
+#      - ./grafana/data:/var/lib/grafana
+#      - ./grafana/provisioning:/etc/grafana/provisioning
     environment:
       - GF_PATHS_DATA=/var/lib/grafana
+      - INFLUX_TOKEN=_ouSHzto7lXILtP7bE_N9reJfV9FuxONJWgex3pN6TOf3S2sGI2tqRvLqfQkJ3EmBNCRvlEZJj0PQH3DPgBXwA==
     ports:
       - 3000:3000
 

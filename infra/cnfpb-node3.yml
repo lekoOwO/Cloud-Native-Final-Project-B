@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cnfpb-node3-pod
+  labels:
+    app: cnfpb-node3
+spec:
+  containers:
+    - name: cnfpb-node3
+      image: howhow8765/cnfpb-node:latest
+      env:
+      - name: NODE_ID
+        value: "3"
+      ports:
+      - containerPort: 8081

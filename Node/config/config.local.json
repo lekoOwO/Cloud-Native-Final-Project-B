@@ -1,0 +1,21 @@
+{
+    "server": {"servers": "localhost" },
+    "db": {
+        "uri": "mongodb://localhost:27017",
+        "db": "node"
+    },
+    "node": {
+        "id": 1
+    },
+    "http": {
+        "port": 8081
+    },
+    "influx": {
+        "credential" : {
+            "url": "http://localhost:8086",
+            "token": "_ouSHzto7lXILtP7bE_N9reJfV9FuxONJWgex3pN6TOf3S2sGI2tqRvLqfQkJ3EmBNCRvlEZJj0PQH3DPgBXwA=="
+        },
+        "org": "cloud17",
+        "bucket": "steak"
+    }
+}
