@@ -8,3 +8,6 @@
         a. PreLayer -> 生材料、量材料參數
         b. Adjuster -> 根據材料生成微調 Recipe
         c. Factory -> 製造工廠
+        d. Reporter -> 記錄製造結果
+
+![Smart Factory Graph](https://i.imgur.com/VyMXM3f.png)

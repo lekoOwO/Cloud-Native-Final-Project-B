@@ -12,9 +12,12 @@ try {
 const db = client.db(config.db.db);
 const collections = {
     material: db.collection("material"),
+    strategy: db.collection("strategy"),
+    result: db.collection("result"),
+    oven: db.collection("oven"),
 };
 
-function add(type, data){
+async function add(type, data){
     if (!collections.hasOwnProperty(type)) {
         throw new Error(`unknown collection: ${type}`);
     }
@@ -23,7 +26,16 @@ function add(type, data){
     return result.insertedId;
 }
 
+async function loadOne(type, match, option){
+    if (!collections.hasOwnProperty(type)) {
+        throw new Error(`unknown collection: ${type}`);
+    }
+
+    return await collections[type].findOne(match, option);
+}
+
 export {
     client, db,
     add,
+    loadOne
 }

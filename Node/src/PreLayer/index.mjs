@@ -1,15 +1,8 @@
-import {Router} from "express";
 import {add as dbAdd} from "../db.mjs";
 import { v4 as uuidv4 } from 'uuid';
+import {randomIntFromInterval, config} from "../utils.mjs";
 
-// utils
-function randomIntFromInterval(min, max) { // min and max included 
-    return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
-const router = Router();
-
-router.post("/material", async(req, res) => {
+async function generateMaterialPatch(){
     // Generate thickness and moisture randomly
     const thickness = randomIntFromInterval(18, 25); // mm
     const moisture = randomIntFromInterval(50, 80); // %
@@ -20,14 +13,16 @@ router.post("/material", async(req, res) => {
         materials.push(uuidv4());
     }
 
-    const patchId = await dbAdd("material", {
+    const patch =  {
         thickness,
         moisture,
         amount,
         materials
-    });
+    }
 
-    res.json({status: "ok", result: patchId}).status(200);
-})
+    const patchId = await dbAdd("material", {...patch, node: config.node.id});
 
-export default router;
+    return {patchId, ...patch};
+}
+
+export {generateMaterialPatch}

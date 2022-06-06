@@ -1,19 +1,23 @@
 import * as fs from "fs";
+import path from "path";
+import {fileURLToPath} from 'url';
 
-const config = fs.readFileSync("../config/config.json")
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-function calcDone({thickness, time, temp, moisture}){
-    // on thickness = 25mm, time = 25min, moisture = 50%, temp = 200 C, we have done = 100 (%)
-    const c1 = 10.5708245;
+const CONFIG_PATH = path.join(__dirname, "../config/config.json");
+const config = JSON.parse(fs.readFileSync(CONFIG_PATH, {encoding: "utf8"}));
 
-    const mc = (1/moisture);
-    const tc = (1/thickness);
-    const tmc = time;
-    const tpc = temp + 273;
-
-    const done = mc * tc * tmc * tpc * c1;
-
-    return done;
+function randomIntFromInterval(min, max) { // min and max included 
+    return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-export {config, calcDone};
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function randomItem(items){
+    return items[Math.floor(Math.random()*items.length)];
+}
+
+export {config, randomIntFromInterval, sleep, randomItem};

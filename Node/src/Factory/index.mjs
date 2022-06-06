@@ -1,18 +1,13 @@
 import { subscribe } from "./nats.mjs";
-import { Router } from "express";
+import {log, error} from "./utils.mjs"
+import {config} from "../utils.mjs"
+import {Oven} from "./oven.mjs"
 
-const router = Router();
-
-
-router.get("/status", async(req, res) => {
-
-});
-
-router.post("/perform", async(req, res) => {
-    const {material, strategy} = req.body;
-    
-})
+const oven = new Oven(config.node.id);
 
 subscribe("recipe.new", async (recipe) => {
-    console.log(`[Factory.subscribe.recipe.new] Receive new recipe from dispatcher.`)
+    log(`[subscribe.recipe.new] Receive new recipe from dispatcher.`, recipe);
+    oven.setRecipe(recipe);
 });
+
+export {oven};

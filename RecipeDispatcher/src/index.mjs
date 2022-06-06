@@ -1,10 +1,10 @@
 import {config} from "./utils.mjs"
-import * as express from "express"
+import express from "express";
 import recipeRouter from "./routes/recipe.mjs"
 
 const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 const router = express.Router();
 router.use("/recipe", recipeRouter);
